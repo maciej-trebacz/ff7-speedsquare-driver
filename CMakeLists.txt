@@ -170,62 +170,8 @@ target_compile_features(${RELEASE_NAME}
 target_link_options(${RELEASE_NAME} PRIVATE /PDBALTPATH:${RELEASE_NAME}.pdb PRIVATE /DEF:${CMAKE_SOURCE_DIR}/misc/${RELEASE_NAME}.def)
 
 # SHADER COMPILATION
+
 set(FFNX_SHADERS "FFNx" "FFNx.lighting" "FFNx.shadowmap" "FFNx.field.shadow" "FFNx.overlay" "FFNx.post" "FFNx.blit")
-foreach(FFNX_SHADER IN LISTS FFNX_SHADERS)
-  foreach(BGFX_VARYING flat smooth)
-    add_custom_command(
-      TARGET ${RELEASE_NAME}
-      POST_BUILD
-      COMMAND echo Building ${FFNX_SHADER}.${BGFX_VARYING} vert/frag shaders...
-      # ensure bin directory exists
-      COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/bin/shaders
-      # OpenGL
-      COMMAND
-        ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/tools/bgfx/shadercRelease -i ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/include -f ${CMAKE_SOURCE_DIR}/misc/${FFNX_SHADER}.frag -o
-        ${CMAKE_BINARY_DIR}/bin/shaders/${FFNX_SHADER}.${BGFX_VARYING}.gl.frag --type f --varyingdef
-        ${CMAKE_SOURCE_DIR}/misc/${RELEASE_NAME}.varying.${BGFX_VARYING}.def.sc --profile 120
-      COMMAND
-        ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/tools/bgfx/shadercRelease -i ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/include -f ${CMAKE_SOURCE_DIR}/misc/${FFNX_SHADER}.vert -o
-        ${CMAKE_BINARY_DIR}/bin/shaders/${FFNX_SHADER}.${BGFX_VARYING}.gl.vert --type v --varyingdef
-        ${CMAKE_SOURCE_DIR}/misc/${RELEASE_NAME}.varying.${BGFX_VARYING}.def.sc --profile 120
-      # Vulkan
-      COMMAND
-        ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/tools/bgfx/shadercRelease -i ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/include -f ${CMAKE_SOURCE_DIR}/misc/${FFNX_SHADER}.frag -o
-        ${CMAKE_BINARY_DIR}/bin/shaders/${FFNX_SHADER}.${BGFX_VARYING}.vk.frag --type f --varyingdef
-        ${CMAKE_SOURCE_DIR}/misc/${RELEASE_NAME}.varying.${BGFX_VARYING}.def.sc --platform windows --profile spirv
-      COMMAND
-        ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/tools/bgfx/shadercRelease -i ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/include -f ${CMAKE_SOURCE_DIR}/misc/${FFNX_SHADER}.vert -o
-        ${CMAKE_BINARY_DIR}/bin/shaders/${FFNX_SHADER}.${BGFX_VARYING}.vk.vert --type v --varyingdef
-        ${CMAKE_SOURCE_DIR}/misc/${RELEASE_NAME}.varying.${BGFX_VARYING}.def.sc --platform windows --profile spirv
-      # Direct3D 9
-      COMMAND
-        ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/tools/bgfx/shadercRelease -i ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/include -f ${CMAKE_SOURCE_DIR}/misc/${FFNX_SHADER}.frag -o
-        ${CMAKE_BINARY_DIR}/bin/shaders/${FFNX_SHADER}.${BGFX_VARYING}.d3d9.frag --type f --varyingdef
-        ${CMAKE_SOURCE_DIR}/misc/${RELEASE_NAME}.varying.${BGFX_VARYING}.def.sc --platform windows -p s_3_0 -O 3
-      COMMAND
-        ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/tools/bgfx/shadercRelease -i ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/include -f ${CMAKE_SOURCE_DIR}/misc/${FFNX_SHADER}.vert -o
-        ${CMAKE_BINARY_DIR}/bin/shaders/${FFNX_SHADER}.${BGFX_VARYING}.d3d9.vert --type v --varyingdef
-        ${CMAKE_SOURCE_DIR}/misc/${RELEASE_NAME}.varying.${BGFX_VARYING}.def.sc --platform windows -p s_3_0 -O 3
-      # Direct3D 11
-      COMMAND
-        ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/tools/bgfx/shadercRelease -i ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/include -f ${CMAKE_SOURCE_DIR}/misc/${FFNX_SHADER}.frag -o
-        ${CMAKE_BINARY_DIR}/bin/shaders/${FFNX_SHADER}.${BGFX_VARYING}.d3d11.frag --type f --varyingdef
-        ${CMAKE_SOURCE_DIR}/misc/${RELEASE_NAME}.varying.${BGFX_VARYING}.def.sc --platform windows -p s_5_0 -O 3
-      COMMAND
-        ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/tools/bgfx/shadercRelease -i ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/include -f ${CMAKE_SOURCE_DIR}/misc/${FFNX_SHADER}.vert -o
-        ${CMAKE_BINARY_DIR}/bin/shaders/${FFNX_SHADER}.${BGFX_VARYING}.d3d11.vert --type v --varyingdef
-        ${CMAKE_SOURCE_DIR}/misc/${RELEASE_NAME}.varying.${BGFX_VARYING}.def.sc --platform windows -p s_5_0 -O 3
-      # Direct3D 12
-      COMMAND
-        ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/tools/bgfx/shadercRelease -i ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/include -f ${CMAKE_SOURCE_DIR}/misc/${FFNX_SHADER}.frag -o
-        ${CMAKE_BINARY_DIR}/bin/shaders/${FFNX_SHADER}.${BGFX_VARYING}.d3d12.frag --type f --varyingdef
-        ${CMAKE_SOURCE_DIR}/misc/${RELEASE_NAME}.varying.${BGFX_VARYING}.def.sc --platform windows -p s_5_0 -O 3
-      COMMAND
-        ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/tools/bgfx/shadercRelease -i ${CMAKE_BINARY_DIR}/vcpkg_installed/x86-windows-static/include -f ${CMAKE_SOURCE_DIR}/misc/${FFNX_SHADER}.vert -o
-        ${CMAKE_BINARY_DIR}/bin/shaders/${FFNX_SHADER}.${BGFX_VARYING}.d3d12.vert --type v --varyingdef
-        ${CMAKE_SOURCE_DIR}/misc/${RELEASE_NAME}.varying.${BGFX_VARYING}.def.sc --platform windows -p s_5_0 -O 3)
-  endforeach()
-endforeach()
 
 # INSTALL
 add_custom_command(

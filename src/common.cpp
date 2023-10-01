@@ -709,7 +709,7 @@ int common_create_window(HINSTANCE hInstance, struct game_obj* game_object)
 	}
 	else
 	{
-		VRASS(game_object, window_title, "Final Fantasy VII");
+		VRASS(game_object, window_title, "Final Fantasy VII SpeedSquare edition");
 	}
 
 	if (window_size_x == 0 || window_size_y == 0)
@@ -841,7 +841,7 @@ int common_create_window(HINSTANCE hInstance, struct game_obj* game_object)
 				max_texture_size = newRenderer.getCaps()->limits.maxTextureSize;
 				ffnx_info("Max texture size: %ix%i\n", max_texture_size, max_texture_size);
 
-				newRenderer.prepareFFNxLogo();
+				// newRenderer.prepareFFNxLogo();
 
 				newRenderer.prepareEnvBrdf();
 

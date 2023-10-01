@@ -38,14 +38,6 @@ WORD snowboard_fix[] = {0x0F, 0x10, 0x0F};
 
 uint32_t ff7_credits_loop_gfx_begin_scene(uint32_t unknown, struct game_obj *game_object)
 {
-	if (drawFFNxLogoFrame(game_object)) {
-		if (ff7_externals.get_button_pressed(-1)) {
-			stopDrawFFNxLogo();
-		}
-
-		return 0;
-	}
-
 	return common_begin_scene(unknown, game_object);
 }
 
@@ -73,9 +65,6 @@ void ff7_init_hooks(struct game_obj *_game_object)
 
 	game_object->d3d2_flag = 1;
 	game_object->nvidia_fix = 0;
-
-	// Load Models atoi function
-	replace_call_function(ff7_externals.field_load_models_atoi, ff7_field_load_models_atoi);
 
 	// DirectInput hack, try to reacquire on any error
 	memset_code(ff7_externals.dinput_getdata2 + 0x65, 0x90, 9);
@@ -111,10 +100,10 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	patch_code_byte(ff7_externals.field_draw_everything + 0xE2, 0x1D);
 	patch_code_byte(ff7_externals.field_draw_everything + 0x353, 0x1D);
 	replace_function(ff7_externals.open_flevel_siz, ff7::field::field_open_flevel_siz);
-	replace_function(ff7_externals.field_init_scripted_bg_movement, ff7::field::field_init_scripted_bg_movement);
-	replace_function(ff7_externals.field_update_scripted_bg_movement, ff7::field::field_update_scripted_bg_movement);
+	//replace_function(ff7_externals.field_init_scripted_bg_movement, ff7::field::field_init_scripted_bg_movement);
+	//replace_function(ff7_externals.field_update_scripted_bg_movement, ff7::field::field_update_scripted_bg_movement);
 
-	replace_function(ff7_externals.get_equipment_stats, get_equipment_stats);
+	//replace_function(ff7_externals.get_equipment_stats, get_equipment_stats);
 
 	replace_function(common_externals.open_file, open_file);
 	replace_function(common_externals.read_file, read_file);
@@ -139,37 +128,29 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	replace_function(ff7_externals.kernel2_add_section, kernel2_add_section);
 	replace_function(ff7_externals.kernel2_get_text, kernel2_get_text);
 	patch_code_uint((uint32_t)ff7_externals.kernel_load_kernel2 + 0x1D, 20 * 65536);
-	replace_call_function(ff7_externals.kernel_init + 0x1FD, ff7_load_kernel2_wrapper);
-	replace_call_function(ff7_externals.battle_scene_bin_sub_5D1050 + 0x85, ff7::battle::load_scene_bin_chunk);
+  // mav: external kernel/scene bin loaders that we don't need
+  // replace_call_function(ff7_externals.kernel_init + 0x1FD, ff7_load_kernel2_wrapper);
+	// replace_call_function(ff7_externals.battle_scene_bin_sub_5D1050 + 0x85, ff7::battle::load_scene_bin_chunk);
 
-	replace_function(ff7_externals.read_field_file, ff7_read_field_file);
+	// replace_function(ff7_externals.read_field_file, ff7_read_field_file);
 
 	// prevent FF7 from stopping the movie when the window gets unfocused
 	replace_function(ff7_externals.wm_activateapp, ff7_wm_activateapp);
 
 	// required for the soft reset
-	replace_function(ff7_externals.engine_exit_game_mode_sub_666C78, ff7_engine_exit_game_mode);
+	// replace_function(ff7_externals.engine_exit_game_mode_sub_666C78, ff7_engine_exit_game_mode);
 
 	// required to fix missing gameover music and broken menu sound after playing it
 	replace_call_function(ff7_externals.on_gameover_enter, ff7_on_gameover_enter);
 	replace_call_function(ff7_externals.on_gameover_exit, ff7_on_gameover_exit);
-
-	// Disable DirectSound creation when using the external SFX layer
-	// TODO: We need to hook more functions in the engine as it causes crashes around the game the way it is now.
-	// if (use_external_sfx)
-	// {
-	// 	replace_function(common_externals.directsound_create, ff7_dsound_create);
-	// 	replace_function(common_externals.directsound_release, ff7_dsound_release);
-	// 	replace_function(common_externals.directsound_createsoundbuffer, ff7_dsound_createsoundbuffer);
-	// }
 
 	// ##################################
 	// animation glitch fixes
 	// ##################################
 
 	// phoenix camera animation glitch
-	memset_code(ff7_externals.run_phoenix_main_loop_516297 + 0x3A5, 0x90, 49);
-	memset_code(ff7_externals.run_phoenix_main_loop_516297 + 0x3F7, 0x90, 49);
+	// memset_code(ff7_externals.run_phoenix_main_loop_516297 + 0x3A5, 0x90, 49);
+	// memset_code(ff7_externals.run_phoenix_main_loop_516297 + 0x3F7, 0x90, 49);
 
 	// ##################################
 	// bugfixes to enhance game stability
@@ -186,10 +167,11 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	memcpy(ff7_externals.snowboard_fix, snowboard_fix, sizeof(snowboard_fix));
 
 	// coaster aim fix
-	patch_code_byte(ff7_externals.coaster_sub_5EE150 + 0x129, 5);
-	patch_code_byte(ff7_externals.coaster_sub_5EE150 + 0x14A, 5);
-	patch_code_byte(ff7_externals.coaster_sub_5EE150 + 0x16D, 5);
-	patch_code_byte(ff7_externals.coaster_sub_5EE150 + 0x190, 5);
+  // mav: this was not in the original driver
+	// patch_code_byte(ff7_externals.coaster_sub_5EE150 + 0x129, 5);
+	// patch_code_byte(ff7_externals.coaster_sub_5EE150 + 0x14A, 5);
+	// patch_code_byte(ff7_externals.coaster_sub_5EE150 + 0x16D, 5);
+	// patch_code_byte(ff7_externals.coaster_sub_5EE150 + 0x190, 5);
 
 	// condor minigame load unit textures fix
 	replace_call_function(ff7_externals.sub_5F342C + 0x66E, ff7_condor_fix_unit_texture_load);
@@ -240,55 +222,29 @@ void ff7_init_hooks(struct game_obj *_game_object)
 		replace_function(ff7_externals.fps_limiter_chocobo, ff7_limit_fps);
 		replace_function(ff7_externals.fps_limiter_submarine, ff7_limit_fps);
 		replace_function(ff7_externals.fps_limiter_credits, ff7_limit_fps);
-
-		if (ff7_fps_limiter >= FF7_LIMITER_30FPS)
-		{
-			battle_frame_multiplier = (ff7_fps_limiter == FF7_LIMITER_30FPS) ? 2 : 4;
-
-			patch_divide_code<byte>(ff7_externals.battle_fps_menu_multiplier, 2); // Works perfectly only in 30 FPS
-
-			ff7::battle::camera_hook_init();
-			ff7::battle::animations_hook_init();
-
-			if(ff7_fps_limiter == FF7_LIMITER_60FPS)
-			{
-				common_frame_multiplier = 2;
-				ff7::world::world_hook_init();
-
-				// Swirl mode 60FPS fix
-				patch_multiply_code<byte>(ff7_externals.swirl_main_loop + 0x184, common_frame_multiplier); // wait frames before swirling
-				patch_multiply_code<byte>(ff7_externals.swirl_loop_sub_4026D4 + 0x3E, common_frame_multiplier);
-				byte swirl_cmp_fix[7] = {0x82, 0xB9, 0x50, 0x11, 0x00, 0x00, 0x9C};
-				memcpy_code(ff7_externals.swirl_loop_sub_4026D4 + 0x10B, swirl_cmp_fix, sizeof(swirl_cmp_fix));
-				patch_divide_code<double>(get_absolute_value(ff7_externals.swirl_loop_sub_4026D4, 0x1AB), common_frame_multiplier);
-				patch_divide_code<double>(get_absolute_value(ff7_externals.swirl_loop_sub_4026D4, 0x1B1), common_frame_multiplier);
-				patch_divide_code<double>(get_absolute_value(ff7_externals.swirl_loop_sub_4026D4, 0x1E4), common_frame_multiplier);
-				patch_divide_code<double>(get_absolute_value(ff7_externals.swirl_loop_sub_4026D4, 0x1EA), common_frame_multiplier);
-			}
-		}
 	}
 
 	// Field FPS fix (60FPS, 30FPS movies)
-	ff7::field::ff7_field_hook_init();
+	// ff7::field::ff7_field_hook_init();
 
 	// ##########################
 	// field eye to model mapping
 	// ##########################
-	replace_function(ff7_externals.field_models_eye_to_model, ff7::field::ff7_field_models_eye_to_model);
+	// replace_function(ff7_externals.field_models_eye_to_model, ff7::field::ff7_field_models_eye_to_model);
 
 	// #####################
 	// red XIII eye blinking
 	// #####################
-	byte ff7_redxiii_eye_fix[] = "\xEC\x79\x90\x00\x00\x00\x00\x00";
-	memcpy_code(ff7_externals.field_models_eye_blink_buffer + 0x58, ff7_redxiii_eye_fix, sizeof(ff7_redxiii_eye_fix) - 1);
+	// byte ff7_redxiii_eye_fix[] = "\xEC\x79\x90\x00\x00\x00\x00\x00";
+	// memcpy_code(ff7_externals.field_models_eye_blink_buffer + 0x58, ff7_redxiii_eye_fix, sizeof(ff7_redxiii_eye_fix) - 1);
 
 	// #####################
 	// field vertical center
 	// #####################
 	if(ff7_field_center || aspect_ratio == AR_WIDESCREEN)
 	{
-		patch_code_byte(ff7_externals.field_init_viewport_values + 0x35, 16);
-		patch_code_int(ff7_externals.field_init_viewport_values + 0x6E, 240);
+		// patch_code_byte(ff7_externals.field_init_viewport_values + 0x35, 16);
+		// patch_code_int(ff7_externals.field_init_viewport_values + 0x6E, 240);
 	}
 
 	// #####################
@@ -305,14 +261,14 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	// #####################
 	// battle toggle
 	// #####################
-	replace_call_function(ff7_externals.field_battle_toggle, ff7_toggle_battle_field);
-	replace_call_function(ff7_externals.worldmap_battle_toggle, ff7_toggle_battle_worldmap);
+	// replace_call_function(ff7_externals.field_battle_toggle, ff7_toggle_battle_field);
+	// replace_call_function(ff7_externals.worldmap_battle_toggle, ff7_toggle_battle_worldmap);
 
 	// #####################
 	// auto attack toggle
 	// #####################
-	replace_call_function(ff7_externals.battle_menu_update_6CE8B3 + 0xD9, ff7_battle_menu_sub_6DB0EE);
-	replace_call_function(ff7_externals.handle_actor_ready + 0x187, ff7_set_battle_menu_state_data_at_full_atb);
+	// replace_call_function(ff7_externals.battle_menu_update_6CE8B3 + 0xD9, ff7_battle_menu_sub_6DB0EE);
+	// replace_call_function(ff7_externals.handle_actor_ready + 0x187, ff7_set_battle_menu_state_data_at_full_atb);
 
 	// #####################
 	// gamepad
@@ -331,25 +287,6 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	//######################
 	replace_call_function(ff7_externals.timer_menu_sub + 0x72F, ff7_menu_sub_6F5C0C);
 	replace_call_function(ff7_externals.timer_menu_sub + 0xD77, ff7_menu_sub_6FAC38);
-
-	//######################
-	// shadow lighting fix
-	//######################
-	if(enable_lighting)
-	    memset_code(ff7_externals.battle_sub_42F3E8 + 0xD7D, 0x90, 78); // Disable battle shadow draw call
-
-	//######################
-	// day night time cycle
-	//######################
-	if (enable_time_cycle)
-	{
-		replace_call_function(ff7_externals.battle_draw_text_ui_graphics_objects_call, ff7::battle::draw_ui_graphics_objects_wrapper);
-		replace_call_function(ff7_externals.battle_draw_box_ui_graphics_objects_call, ff7::battle::draw_ui_graphics_objects_wrapper);
-
-		replace_call_function(ff7_externals.world_wm0_overworld_draw_all_74C179 + 0x175, ff7::world::wm0_draw_minimap_quad_graphics_object);
-		replace_call_function(ff7_externals.world_wm0_overworld_draw_all_74C179 + 0x1BE, ff7::world::wm0_draw_world_effects_1_graphics_object);
-		replace_call_function(ff7_externals.world_wm0_overworld_draw_all_74C179 + 0x208, ff7::world::wm0_draw_minimap_points_graphics_object);
-	}
 
 	//#############################
 	// steam save game preservation
@@ -422,7 +359,7 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	//######################
 	// snowboard .P model vertices limit fix + allow float vertex data type
 	//######################
-	replace_function(ff7_externals.snowboard_parse_model_vertices_732159, ff7_snowboard_parse_model_vertices);
+	// replace_function(ff7_externals.snowboard_parse_model_vertices_732159, ff7_snowboard_parse_model_vertices);
 }
 
 struct ff7_gfx_driver *ff7_load_driver(void* _game_object)
