@@ -529,8 +529,6 @@ void ff7_limit_fps()
 		case MODE_BATTLE:
 			if (ff7_fps_limiter < FF7_LIMITER_30FPS) framerate = 15.0f;
 			break;
-		case MODE_SNOWBOARD:
-		case MODE_COASTER:
 		case MODE_CONDOR:
 		case MODE_CREDITS:
 			framerate = 60.0f;
@@ -553,16 +551,20 @@ void ff7_limit_fps()
 			break;
 		}
 	}
-
+  
 	switch(mode->driver_mode)
 	{
 	case MODE_SUBMARINE:
+    // The code below halves the framerate of the minigame
+    // so we set it to 60 here in order for it to become 30 later
+    framerate = 60.0f;
 		if (*ff7_externals.submarine_minigame_status)
 			*ff7_externals.submarine_minigame_status = 0;
 		else
 			*ff7_externals.submarine_minigame_status = 1;
 		break;
 	}
+  
 
 	framerate *= gamehacks.getCurrentSpeedhack();
 

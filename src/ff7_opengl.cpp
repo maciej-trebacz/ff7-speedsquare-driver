@@ -73,6 +73,12 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	// Allow mouse cursor to be shown
 	replace_function(ff7_externals.dinput_createdevice_mouse, noop);
 
+  // Restore Steam release behavior on character name screen when using gamepads in Steam Input mode
+  // SPEEDSQUARE TODO: Use relative addresses here
+  replace_function(0x719ce4, noop);
+  replace_function(0x718710, noop);
+  replace_function(0x719d03, noop);
+
 	// TODO: Comment this if Chocobo's not visible in race
 	// replace_function(ff7_externals.draw_3d_model, draw_3d_model);
 
@@ -100,8 +106,8 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	patch_code_byte(ff7_externals.field_draw_everything + 0xE2, 0x1D);
 	patch_code_byte(ff7_externals.field_draw_everything + 0x353, 0x1D);
 	replace_function(ff7_externals.open_flevel_siz, ff7::field::field_open_flevel_siz);
-	//replace_function(ff7_externals.field_init_scripted_bg_movement, ff7::field::field_init_scripted_bg_movement);
-	//replace_function(ff7_externals.field_update_scripted_bg_movement, ff7::field::field_update_scripted_bg_movement);
+	replace_function(ff7_externals.field_init_scripted_bg_movement, ff7::field::field_init_scripted_bg_movement);
+	replace_function(ff7_externals.field_update_scripted_bg_movement, ff7::field::field_update_scripted_bg_movement);
 
 	//replace_function(ff7_externals.get_equipment_stats, get_equipment_stats);
 
@@ -217,15 +223,23 @@ void ff7_init_hooks(struct game_obj *_game_object)
 		replace_function(ff7_externals.fps_limiter_condor, ff7_limit_fps);
 		replace_function(ff7_externals.fps_limiter_field, ff7_limit_fps);
 		replace_function(ff7_externals.fps_limiter_highway, ff7_limit_fps);
-		replace_function(ff7_externals.fps_limiter_snowboard, ff7_limit_fps);
+	  replace_function(ff7_externals.fps_limiter_snowboard, ff7_limit_fps);
 		replace_function(ff7_externals.fps_limiter_worldmap, ff7_limit_fps);
 		replace_function(ff7_externals.fps_limiter_chocobo, ff7_limit_fps);
 		replace_function(ff7_externals.fps_limiter_submarine, ff7_limit_fps);
 		replace_function(ff7_externals.fps_limiter_credits, ff7_limit_fps);
+
+    // snowboard fps fix SPEEDSQUARE TODO: Add relative addresses
+    memset_code(0x72386b, 0x90, 2);
+    memset_code(0x7238a0, 0x90, 2);
+
+    // coaster fps fix
+    memset_code(0x5e8f34, 0x90, 2);
+    memset_code(0x5e8f5e, 0x90, 2);
 	}
 
 	// Field FPS fix (60FPS, 30FPS movies)
-	// ff7::field::ff7_field_hook_init();
+  // ff7::field::ff7_field_hook_init();
 
 	// ##########################
 	// field eye to model mapping

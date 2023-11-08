@@ -649,7 +649,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		HandleInputEvents(uMsg, wParam, lParam);
 	}
 
-	gamehacks.processKeyboardInput(uMsg, wParam, lParam);
+  // SPEEDSQUARE - Disabled gamehacks
+	// gamehacks.processKeyboardInput(uMsg, wParam, lParam);
 
 	return common_externals.engine_wndproc(hwnd, uMsg, wParam, lParam);
 }
@@ -1155,7 +1156,8 @@ void common_flip(struct game_obj *game_object)
 	frame_counter++;
 
 	// We need to process Gamepad input on each frame
-	gamehacks.processGamepadInput();
+  // SPEEDQUARE - Disabled gamehacks
+	// gamehacks.processGamepadInput();
 
 	// Update day night time cycle
 	if (!ff8 && enable_time_cycle) ff7::time.update();

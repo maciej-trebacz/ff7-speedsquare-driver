@@ -398,3 +398,4 @@ cmake-build*/
 # vcpkg
 !make.exe
 vcpkg_installed/
+/out/build/x64-debug
