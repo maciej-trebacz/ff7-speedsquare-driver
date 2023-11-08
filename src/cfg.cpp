@@ -160,21 +160,8 @@ void read_cfg()
 {
 	toml::parse_result config;
 
-	try
-	{
-		config = toml::parse_file(FFNX_CFG_FILE);
-	}
-	catch (const toml::parse_error &err)
-	{
-		ffnx_warning("Parse error while opening the file " FFNX_CFG_FILE ". Will continue with the default settings.\n");
-		ffnx_warning("%s (Line %u Column %u)\n", err.what(), err.source().begin.line, err.source().begin.column);
-
-		char tmp[1024]{0};
-		sprintf(tmp, "%s (Line %u Column %u)\n\nWill continue with safe default settings.", err.what(), err.source().begin.line, err.source().begin.column);
-		MessageBoxA(gameHwnd, tmp, "Configuration issue detected!", MB_ICONWARNING | MB_OK);
-
-		config = toml::parse("");
-	}
+  // SpeedSquare: no config file loading, all config values are static
+  config = toml::parse("");
 
 	// Read config values
 	mod_path = config["mod_path"].value_or("");
@@ -224,7 +211,7 @@ void read_cfg()
 	trace_battle_text = config["trace_battle_text"].value_or(false);
 	vertex_log = config["vertex_log"].value_or(false);
 	uniform_log = config["uniform_log"].value_or(false);
-	show_renderer_backend = config["show_renderer_backend"].value_or(true);
+	show_renderer_backend = config["show_renderer_backend"].value_or(false);
 	show_fps = config["show_fps"].value_or(false);
 	show_stats = config["show_stats"].value_or(false);
 	show_version = config["show_version"].value_or(true);
@@ -266,7 +253,7 @@ void read_cfg()
 	disable_animated_textures_on_field = get_string_or_array_of_strings(config["disable_animated_textures_on_field"]);
 	ff7_fps_limiter = config["ff7_fps_limiter"].value_or(FF7_LIMITER_DEFAULT);
 	ff7_footsteps = config["ff7_footsteps"].value_or(false);
-	ff7_field_center = config["ff7_field_center"].value_or(true);
+	ff7_field_center = config["ff7_field_center"].value_or(false);
 	enable_analogue_controls = config["enable_analogue_controls"].value_or(false);
 	enable_inverted_camera_controls = config["enable_inverted_camera_controls"].value_or(false);
 	left_analog_stick_deadzone = config["left_analog_stick_deadzone"].value_or(0.1);
