@@ -399,3 +399,9 @@ cmake-build*/
 !make.exe
 vcpkg_installed/
 /out/build/x64-debug
+
+# CMake
+CMakeFiles
+.dist
+out
+CMakeCache.txt
