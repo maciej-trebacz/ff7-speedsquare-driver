@@ -4,7 +4,7 @@ This is a custom graphics driver for Final Fantasy VII created for speedrun purp
 
 ## Original authors
 
-FFNx is riginally developed by:
+FFNx is originally developed by:
 
 - [Julian Xhokaxhiu](https://github.com/julianxhokaxhiu) (TrueOdin, 🇪🇸 Spain)
 - [Tang-Tang Zhou](https://github.com/tangtang95) (vertex2995, 🇮🇹 Italy)
