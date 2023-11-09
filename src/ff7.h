@@ -2691,6 +2691,7 @@ struct ff7_externals
 	BOOL (*write_save_file)(char);
 	uint32_t *menu_subs_call_table;
 	uint32_t status_menu_sub;
+  uint32_t config_menu_sub;
 	uint32_t draw_status_limit_level_stats;
 	uint32_t timer_menu_sub;
 	DWORD *millisecond_counter;
@@ -2774,6 +2775,7 @@ struct ff7_externals
 	uint32_t init_directinput;
 	uint32_t dinput_createdevice_mouse;
 	void (*sub_69C69F)(struct matrix *, struct ff7_light *);
+  uint32_t coaster_main_loop;
 	uint32_t coaster_sub_5E9051;
 	uint32_t coaster_sub_5EE150;
 	uint32_t cleanup_game;

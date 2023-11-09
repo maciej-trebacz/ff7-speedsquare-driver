@@ -508,66 +508,41 @@ void ff7_limit_fps()
 
 	switch(mode->driver_mode)
 	{
-	case MODE_FIELD:
-		if (ff7_externals.movie_object->is_playing && !*ff7_externals.field_limit_fps)
-		{
-			// Some movies do not expect to be frame limited
-			qpc_get_time(&last_gametime);
-			return;
-		}
-		break;
-	case MODE_GAMEOVER:
-		// Gameover screen has nothing to limit
-		qpc_get_time(&last_gametime);
-		return;
+	  case MODE_FIELD:
+		  if (ff7_externals.movie_object->is_playing && !*ff7_externals.field_limit_fps)
+		  {
+			  // Some movies do not expect to be frame limited
+			  qpc_get_time(&last_gametime);
+			  return;
+		  }
+		  break;
+	  case MODE_GAMEOVER:
+		  // Gameover screen has nothing to limit
+		  qpc_get_time(&last_gametime);
+		  return;
 	}
 
-	if (ff7_fps_limiter < FF7_LIMITER_60FPS)
+	switch (mode->driver_mode)
 	{
-		switch (mode->driver_mode)
-		{
-		case MODE_BATTLE:
-			if (ff7_fps_limiter < FF7_LIMITER_30FPS) framerate = 15.0f;
-			break;
-		case MODE_CONDOR:
-		case MODE_CREDITS:
-			framerate = 60.0f;
-			break;
-		}
-	}
-	else
-	{
-		switch (mode->driver_mode)
-		{
-		case MODE_FIELD:
-		case MODE_WORLDMAP:
-		case MODE_BATTLE:
-		case MODE_SWIRL:
-		case MODE_SNOWBOARD:
-		case MODE_COASTER:
-		case MODE_CONDOR:
-		case MODE_CREDITS:
-			framerate = 60.0f;
-			break;
-		}
-	}
-  
-	switch(mode->driver_mode)
-	{
-	case MODE_SUBMARINE:
-    // The code below halves the framerate of the minigame
+	  case MODE_BATTLE:
+		  framerate = 15.0f;
+		  break;
+	  case MODE_CONDOR:
+	  case MODE_CREDITS:
+		  framerate = 60.0f;
+		  break;
+    case MODE_SUBMARINE:
+    // SpeedSquare: The code below halves the framerate of the minigame
     // so we set it to 60 here in order for it to become 30 later
-    framerate = 60.0f;
-		if (*ff7_externals.submarine_minigame_status)
-			*ff7_externals.submarine_minigame_status = 0;
-		else
-			*ff7_externals.submarine_minigame_status = 1;
-		break;
+      framerate = 60.0f;
+
+      if (*ff7_externals.submarine_minigame_status)
+        *ff7_externals.submarine_minigame_status = 0;
+      else
+        *ff7_externals.submarine_minigame_status = 1;
+      break;
 	}
   
-
-	framerate *= gamehacks.getCurrentSpeedhack();
-
 	do qpc_get_time(&gametime);
 	while ((gametime > last_gametime) && qpc_diff_time(&gametime, &last_gametime, NULL) < ((ff7_game_obj*)common_externals.get_game_object())->countspersecond / framerate);
 

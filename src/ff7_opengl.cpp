@@ -66,18 +66,33 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	game_object->d3d2_flag = 1;
 	game_object->nvidia_fix = 0;
 
+  /* SpeedSquare patches */
+
+  // Snowboard minigame FPS fix
+  memset_code(ff7_externals.snowboard_loop_sub_72381C + 0x4F, 0x90, 2);
+  memset_code(ff7_externals.snowboard_loop_sub_72381C + 0x84, 0x90, 2);
+
+  // Coaster minigame FPS fix
+  memset_code(ff7_externals.coaster_main_loop + 0xB6, 0x90, 2);
+  memset_code(ff7_externals.coaster_main_loop + 0xE0, 0x90, 2);
+
+  // Disable "Normal" setting in Controller section of the Config menu (it softlocks on Steam)
+  memset_code(ff7_externals.config_menu_sub + 0x8AC, 0x90, 0xE6);
+
+  // Restore Steam release behavior on character name screen when using gamepads in Steam Input mode
+  // Original Steam driver patched out these three functions
+  replace_function(ff7_externals.set_default_input_settings_save, noop);
+  replace_function(ff7_externals.keyboard_name_input, noop);
+  replace_function(ff7_externals.restore_input_settings, noop);
+
+  /* End of SpeedSquare patches */
+
 	// DirectInput hack, try to reacquire on any error
 	memset_code(ff7_externals.dinput_getdata2 + 0x65, 0x90, 9);
 	memset_code((uint32_t)common_externals.dinput_acquire_keyboard + 0x31, 0x90, 5);
 
 	// Allow mouse cursor to be shown
 	replace_function(ff7_externals.dinput_createdevice_mouse, noop);
-
-  // Restore Steam release behavior on character name screen when using gamepads in Steam Input mode
-  // SPEEDSQUARE TODO: Use relative addresses here
-  replace_function(0x719ce4, noop);
-  replace_function(0x718710, noop);
-  replace_function(0x719d03, noop);
 
 	// TODO: Comment this if Chocobo's not visible in race
 	// replace_function(ff7_externals.draw_3d_model, draw_3d_model);
@@ -109,7 +124,8 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	replace_function(ff7_externals.field_init_scripted_bg_movement, ff7::field::field_init_scripted_bg_movement);
 	replace_function(ff7_externals.field_update_scripted_bg_movement, ff7::field::field_update_scripted_bg_movement);
 
-	//replace_function(ff7_externals.get_equipment_stats, get_equipment_stats);
+  // SpeedSquare: This is the MDef fix, fixing a Steam bug, which we don't want for speedrun purposes
+	// replace_function(ff7_externals.get_equipment_stats, get_equipment_stats);
 
 	replace_function(common_externals.open_file, open_file);
 	replace_function(common_externals.read_file, read_file);
@@ -134,16 +150,16 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	replace_function(ff7_externals.kernel2_add_section, kernel2_add_section);
 	replace_function(ff7_externals.kernel2_get_text, kernel2_get_text);
 	patch_code_uint((uint32_t)ff7_externals.kernel_load_kernel2 + 0x1D, 20 * 65536);
-  // mav: external kernel/scene bin loaders that we don't need
+
+  // SpeedSquare: external kernel/scene bin loaders that we don't need
   // replace_call_function(ff7_externals.kernel_init + 0x1FD, ff7_load_kernel2_wrapper);
 	// replace_call_function(ff7_externals.battle_scene_bin_sub_5D1050 + 0x85, ff7::battle::load_scene_bin_chunk);
-
 	// replace_function(ff7_externals.read_field_file, ff7_read_field_file);
 
 	// prevent FF7 from stopping the movie when the window gets unfocused
 	replace_function(ff7_externals.wm_activateapp, ff7_wm_activateapp);
 
-	// required for the soft reset
+	// required for the soft reset (disabled in SpeedSquare driver)
 	// replace_function(ff7_externals.engine_exit_game_mode_sub_666C78, ff7_engine_exit_game_mode);
 
 	// required to fix missing gameover music and broken menu sound after playing it
@@ -173,7 +189,7 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	memcpy(ff7_externals.snowboard_fix, snowboard_fix, sizeof(snowboard_fix));
 
 	// coaster aim fix
-  // mav: this was not in the original driver
+  // SpeedSquare: this was not in the original driver
 	// patch_code_byte(ff7_externals.coaster_sub_5EE150 + 0x129, 5);
 	// patch_code_byte(ff7_externals.coaster_sub_5EE150 + 0x14A, 5);
 	// patch_code_byte(ff7_externals.coaster_sub_5EE150 + 0x16D, 5);
@@ -228,14 +244,6 @@ void ff7_init_hooks(struct game_obj *_game_object)
 		replace_function(ff7_externals.fps_limiter_chocobo, ff7_limit_fps);
 		replace_function(ff7_externals.fps_limiter_submarine, ff7_limit_fps);
 		replace_function(ff7_externals.fps_limiter_credits, ff7_limit_fps);
-
-    // snowboard fps fix SPEEDSQUARE TODO: Add relative addresses
-    memset_code(0x72386b, 0x90, 2);
-    memset_code(0x7238a0, 0x90, 2);
-
-    // coaster fps fix
-    memset_code(0x5e8f34, 0x90, 2);
-    memset_code(0x5e8f5e, 0x90, 2);
 	}
 
 	// Field FPS fix (60FPS, 30FPS movies)

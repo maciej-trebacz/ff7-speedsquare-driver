@@ -284,6 +284,7 @@ void ff7_find_externals(struct ff7_game_obj* game_object)
 	ff7_externals.menu_subs_call_table = (uint32_t *)get_absolute_value(ff7_externals.menu_sub_6CB56A, 0x2EC);
 	ff7_externals.timer_menu_sub = ff7_externals.menu_subs_call_table[0];
 	ff7_externals.status_menu_sub = ff7_externals.menu_subs_call_table[5];
+  ff7_externals.config_menu_sub = ff7_externals.menu_subs_call_table[8];
 	ff7_externals.menu_sound_slider_loop = ff7_externals.menu_subs_call_table[8];
 	ff7_externals.menu_sub_6FEDB0 = ff7_externals.menu_subs_call_table[10];
 
@@ -423,6 +424,7 @@ void ff7_find_externals(struct ff7_game_obj* game_object)
 
 	ff7_externals.sub_69C69F = (void (*)(matrix*, ff7_light*))get_relative_call(ff7_externals.draw_3d_model, 0x882);
 
+  ff7_externals.coaster_main_loop = coaster_main_loop;
 	ff7_externals.coaster_sub_5E9051 = get_relative_call(coaster_main_loop, 0xC6);
 	ff7_externals.coaster_sub_5EE150 = get_relative_call(ff7_externals.coaster_sub_5E9051, 0x3);
 
