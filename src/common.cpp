@@ -2761,6 +2761,13 @@ __declspec(dllexport) void *new_dll_graphics_driver(void *game_object)
 	return ret;
 }
 
+// function for reading a value from ff7video.cfg
+int readCfgValue(FILE* file) {
+  uint32 cfgValue;
+  fread(&cfgValue, sizeof(DWORD), 1, file);
+  return (cfgValue & 0xff0000 | cfgValue >> 0x10) >> 8 | (cfgValue & 0xff00 | cfgValue << 0x10) << 8;
+}
+
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
 	if (fdwReason == DLL_PROCESS_ATTACH)
@@ -2867,6 +2874,22 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 						if (external_sfx_volume > -1) fread(&external_music_volume, sizeof(DWORD), 1, ff7sound);
 						fclose(ff7sound);
 					}
+
+          // Read ff7video.cfg
+          char ff7videoPath[260]{ 0 };
+          get_userdata_path(ff7videoPath, sizeof(ff7videoPath), false);
+          PathAppendA(ff7videoPath, "ff7video.cfg");
+          FILE* ff7video = fopen(ff7videoPath, "rb");
+          uint32 tmp;
+
+          if (ff7video) {
+            window_size_x = readCfgValue(ff7video);
+            window_size_y = readCfgValue(ff7video);
+            readCfgValue(ff7video); // refresh rate
+            fullscreen = readCfgValue(ff7video) == 1;
+            ffnx_trace("Read window size from ff7video.cfg: %dx%d\n", window_size_x, window_size_y);
+          }
+
 				}
 				// otherwise it's the eStore edition which has same exe names but installed somewhere else
 				else
