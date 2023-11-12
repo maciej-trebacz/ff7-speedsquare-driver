@@ -1012,12 +1012,12 @@ void common_flip(struct game_obj *game_object)
 
 		if (show_version)
 		{
-			gl_draw_text(col, row++, text_colors[TEXTCOLOR_GRAY], 255, "Version: " VERSION);
+      // gl_draw_text(col, row++, text_colors[TEXTCOLOR_GRAY], 255, "Version: " VERSION);
 		}
 
 		if (show_renderer_backend)
 		{
-			gl_draw_text(col, row++, text_colors[TEXTCOLOR_GREEN], 255, "Renderer: %s", newRenderer.currentRenderer.c_str());
+			// gl_draw_text(col, row++, text_colors[TEXTCOLOR_GREEN], 255, "Renderer: %s", newRenderer.currentRenderer.c_str());
 		}
 
 		if (show_fps)
