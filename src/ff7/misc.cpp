@@ -529,6 +529,7 @@ void ff7_limit_fps()
 		  break;
 	  case MODE_CONDOR:
 	  case MODE_CREDITS:
+    case MODE_SWIRL:
 		  framerate = 60.0f;
 		  break;
     case MODE_SUBMARINE:
