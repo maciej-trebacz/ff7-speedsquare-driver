@@ -272,8 +272,8 @@ void read_cfg()
 	app_path = config["app_path"].value_or("");
 	data_drive = config["data_drive"].value_or("");
 	enable_ntscj_gamut_mode = config["enable_ntscj_gamut_mode"].value_or(false);
-	external_music_volume = config["external_music_volume"].value_or(-1);
-	external_sfx_volume = config["external_sfx_volume"].value_or(-1);
+	external_music_volume = config["external_music_volume"].value_or(100);
+	external_sfx_volume = config["external_sfx_volume"].value_or(100);
 	external_voice_volume = config["external_voice_volume"].value_or(-1);
 	external_ambient_volume = config["external_ambient_volume"].value_or(-1);
 	ffmpeg_video_volume = config["ffmpeg_video_volume"].value_or(-1);
