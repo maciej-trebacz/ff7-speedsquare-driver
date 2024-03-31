@@ -1137,7 +1137,9 @@ void common_flip(struct game_obj *game_object)
 	}
 
 	// Enable XInput if a compatible gamepad is detected while playing the game, otherwise continue with native DInput
-	if (!xinput_connected && gamepad.CheckConnection())
+  // SpeedQuare: Disable XInput as it might interfere with Steam Input
+  /*
+  if (!xinput_connected && gamepad.CheckConnection())
 	{
 		if (trace_all || trace_gamepad) ffnx_trace("XInput controller: connected.\n");
 
@@ -1152,6 +1154,7 @@ void common_flip(struct game_obj *game_object)
 
 		xinput_connected = false;
 	}
+  */
 
 	frame_counter++;
 

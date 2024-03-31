@@ -67,6 +67,9 @@ BOOL CALLBACK Joystick::staticSetGameControllerProperties(LPCDIDEVICEOBJECTINSTA
 
 BOOL Joystick::enumerateGameControllers(LPCDIDEVICEINSTANCE devInst)
 {
+  // SpeedSquare: disable native joystick support
+  return DIENUM_CONTINUE;
+
   if(isXInputDevice(&devInst->guidProduct))
     return DIENUM_CONTINUE;
 
@@ -100,6 +103,9 @@ LPDIJOYSTATE2 Joystick::GetState()
 
 bool Joystick::CheckConnection()
 {
+  // SpeedSquare: disable native joystick support
+  return false;
+
   if (dev == nullptr)
   {
     // initialize the main DirectInput 8 device
@@ -175,7 +181,8 @@ bool Joystick::Refresh()
   HRESULT hr;
 
   // Return if no joystick detected
-  if (!CheckConnection()) return false;
+  // SpeedSquare: disable native joystick support
+  return false;
 
   // poll the device to read the current state
   hr = gameController->Poll();

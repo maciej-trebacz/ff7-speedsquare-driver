@@ -79,6 +79,14 @@ void ff7_init_hooks(struct game_obj *_game_object)
   // Disable "Normal" setting in Controller section of the Config menu (it softlocks on Steam)
   memset_code(ff7_externals.config_menu_sub + 0x8AC, 0x90, 0xE6);
 
+  // Remove "Joystick" section from the Controller submenu (it softlocks on Steam)
+  // This does three things: changes the cursor settings to allow only one column,
+  // removes the "Joystick" header and removes the keybinds for the joystick
+  memset_code(ff7_externals.config_controls_set_cursor_obj + 0x12, 1, 1);
+  memset_code(ff7_externals.config_controls_set_cursor_obj + 0x1A, 1, 1);
+  memset_code(ff7_externals.config_controls_menu_sub + 0x6E, 0x90, 0x1B);
+  memset_code(ff7_externals.config_controls_menu_sub + 0xE5, 1, 1);
+
   // Restore Steam release behavior on character name screen when using gamepads in Steam Input mode
   // Original Steam driver patched out these three functions
   replace_function(ff7_externals.set_default_input_settings_save, noop);
