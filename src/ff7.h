@@ -2692,6 +2692,9 @@ struct ff7_externals
 	uint32_t *menu_subs_call_table;
 	uint32_t status_menu_sub;
   uint32_t config_menu_sub;
+  uint32_t config_controls_menu_sub;
+  uint32_t config_controls_set_cursor_obj;
+  uint32_t config_initialize;
 	uint32_t draw_status_limit_level_stats;
 	uint32_t timer_menu_sub;
 	DWORD *millisecond_counter;

@@ -24,7 +24,7 @@
       "binaryDir": "${sourceDir}/.build",
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
-        "_DLL_VERSION": "devel",
+        "_DLL_VERSION": "2.0.2",
         "CMAKE_C_COMPILER": "cl"
       }
     },

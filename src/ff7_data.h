@@ -302,6 +302,9 @@ void ff7_find_externals(struct ff7_game_obj* game_object)
 			break;
 	}
 
+  ff7_externals.config_controls_menu_sub = get_relative_call(ff7_externals.config_menu_sub, 0xE8);
+  ff7_externals.config_controls_set_cursor_obj = get_relative_call(ff7_externals.config_menu_sub, 0xF48);
+
 	ff7_externals.millisecond_counter = (DWORD *)get_absolute_value(ff7_externals.timer_menu_sub, 0xD06);
 	ff7_externals.draw_status_limit_level_stats = get_relative_call(ff7_externals.status_menu_sub, 0x8E);
 
@@ -1328,6 +1331,8 @@ void ff7_find_externals(struct ff7_game_obj* game_object)
 			ff7_externals.load_save_file = get_relative_call(ff7_externals.menu_sub_7212FB, 0xEC5);
 			break;
 	}
+
+  ff7_externals.config_initialize = get_relative_call(main_init_loop, 0x4B0);
 
 	// --------------------------------
 }

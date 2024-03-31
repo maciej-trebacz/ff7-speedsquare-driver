@@ -93,6 +93,9 @@ void ff7_init_hooks(struct game_obj *_game_object)
   replace_function(ff7_externals.keyboard_name_input, noop);
   replace_function(ff7_externals.restore_input_settings, noop);
 
+  // Patch the default config bitmask so that "Customize" controller option is enabled by default
+  memset_code(ff7_externals.config_initialize + 0x36, 0x45, 1);
+
   /* End of SpeedSquare patches */
 
 	// DirectInput hack, try to reacquire on any error
@@ -303,8 +306,8 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	// #####################
 	// gamepad
 	// #####################
-	replace_function(ff7_externals.get_gamepad, ff7_get_gamepad);
-	replace_function(ff7_externals.update_gamepad_status, ff7_update_gamepad_status);
+	//replace_function(ff7_externals.get_gamepad, ff7_get_gamepad);
+	//replace_function(ff7_externals.update_gamepad_status, ff7_update_gamepad_status);
 
 	// #####################
 	// control battle camera

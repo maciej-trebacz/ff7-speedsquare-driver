@@ -21,14 +21,14 @@
 
 #include <windows.h>
 
-#define VER_FILEVERSION             @_DLL_RCVERSION@
-#define VER_FILEVERSION_STR         "@_DLL_RCSTRVERSION@\0"
+#define VER_FILEVERSION             2,0,2,0
+#define VER_FILEVERSION_STR         "2.0.2\0"
 
-#define VER_PRODUCTVERSION          @_DLL_RCVERSION@
-#define VER_PRODUCTVERSION_STR      "@_DLL_RCSTRVERSION@\0"
+#define VER_PRODUCTVERSION          2,0,2,0
+#define VER_PRODUCTVERSION_STR      "2.0.2\0"
 
-#define VER_INTERNALNAME            "@RELEASE_NAME@"
-#define VER_PRODUCTNAME             "@RELEASE_NAME@"
+#define VER_INTERNALNAME            "SpeedSquare"
+#define VER_PRODUCTNAME             "SpeedSquare"
 #define VER_ORIGINALFILENAME        "@RELEASE_NAME@.dll"
 
 VS_VERSION_INFO VERSIONINFO
