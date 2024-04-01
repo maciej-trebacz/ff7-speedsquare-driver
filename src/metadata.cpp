@@ -65,25 +65,14 @@ void Metadata::init()
   userID.assign(strrchr(userPath, '_') + 1);
 }
 
-void Metadata::updateFF7(uint8_t save)
+std::string Metadata::hashFile(const char* filePath, size_t bufferSize)
 {
-  char currentSave[260]{ 0 };
-  BYTE dataBuffer[64 * 1024 + 8]{ 0 };
+  BYTE* dataBuffer = new BYTE[bufferSize + userID.length()];
   int dataSize = userID.length();
+  FILE* file = fopen(filePath, "rb");
 
-  loadXml();
-
-  // Append save file name
-  strcpy(currentSave, userPath);
-  sprintf(currentSave + strlen(currentSave), R"(\save%02i.ff7)", save);
-
-  // Hash existing save files
-  if (fileExists(currentSave))
+  if (file)
   {
-    ffnx_trace("Metadata: calculating hash for %s\n", currentSave);
-
-    FILE* file = fopen(currentSave, "rb");
-
     fseek(file, 0, SEEK_END);
     int fileSize = ftell(file);
     fseek(file, 0, SEEK_SET);
@@ -91,17 +80,70 @@ void Metadata::updateFF7(uint8_t save)
     fclose(file);
 
     memcpy(dataBuffer + fileSize, userID.data(), userID.length());
-
     dataSize += fileSize;
   }
   else
   {
     memcpy(dataBuffer, userID.data(), userID.length());
   }
+
   MD5 md5(dataBuffer, dataSize);
+  delete[] dataBuffer;
+
+  return md5.hexdigest();
+}
+
+std::string Metadata::emptyHash()
+{
+  int dataSize = userID.length();
+  BYTE* dataBuffer = new BYTE[dataSize];
+
+  memcpy(dataBuffer, userID.data(), dataSize);
+  MD5 md5(dataBuffer, dataSize);
+  delete[] dataBuffer;
+
+  return md5.hexdigest();
+}
+
+void Metadata::updateFF7(uint8_t slot, uint8_t save)
+{
+  char currentSave[260]{ 0 };
+  size_t bufferSize = 64 * 1024 + 8;
+
+  // Append save file name
+  strcpy(currentSave, userPath);
+  sprintf(currentSave + strlen(currentSave), R"(\save%02i.ff7)", save);
+
+  loadXml();
+  calcNow();
+
+  // Check if <gamestatus> exists and if not, create it
+  if (doc.child("gamestatus") == nullptr)
+  {
+    ffnx_trace("Metadata: creating <gamestatus> node\n");
+
+    std::string hash = emptyHash();
+    pugi::xml_node gamestatus = doc.append_child("gamestatus");
+
+    for (int i = 0; i < 10; i++)
+    {
+      pugi::xml_node savefiles = gamestatus.append_child("savefiles");
+      savefiles.append_attribute("block").set_value(i + 1);
+
+      for (int j = 0; j < 15; j++)
+      {
+        pugi::xml_node timestamp = savefiles.append_child("timestamp");
+        timestamp.append_attribute("slot").set_value(j + 1);
+        timestamp.text().set(now.data());
+      }
+      pugi::xml_node signature = savefiles.append_child("signature");
+      signature.text().set(hash.data());
+    }
+  }
+
+  std::string hash = hashFile(currentSave, bufferSize);
 
   // Update metadata
-  calcNow();
   for (pugi::xml_node gamestatus : doc.children())
   {
     for (pugi::xml_node savefiles : gamestatus.children())
@@ -112,14 +154,14 @@ void Metadata::updateFF7(uint8_t save)
 
         for (pugi::xml_node child : savefiles.children())
         {
-          if (strcmp(child.name(), "timestamp") == 0)
+          if (strcmp(child.name(), "timestamp") == 0 && std::atoi(child.attribute("slot").value()) == slot + 1)
           {
             child.text().set(now.data());
           }
 
           if (strcmp(child.name(), "signature") == 0)
           {
-            child.text().set(md5.hexdigest().data());
+            child.text().set(hash.data());
           }
         }
       }
@@ -133,10 +175,7 @@ void Metadata::updateFF7(uint8_t save)
 void Metadata::updateFF8(uint8_t slot, uint8_t save)
 {
   char currentSave[260]{ 0 };
-  BYTE dataBuffer[8 * 1024 + 8]{ 0 };
-  int dataSize = userID.length();
-
-  loadXml();
+  size_t bufferSize = 8 * 1024 + 8;
 
   // Append save file name
   strcpy(currentSave, userPath);
@@ -147,31 +186,12 @@ void Metadata::updateFF8(uint8_t slot, uint8_t save)
     sprintf(currentSave + strlen(currentSave), R"(\slot%d_save%02i.ff8)", slot, save);
   }
 
-  // Hash existing save files
-  if (fileExists(currentSave))
-  {
-    ffnx_trace("Metadata: calculating hash for %s\n", currentSave);
+  loadXml();
+  calcNow();
 
-    FILE* file = fopen(currentSave, "rb");
-
-    fseek(file, 0, SEEK_END);
-    int fileSize = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    fread(dataBuffer, 1, fileSize, file);
-    fclose(file);
-
-    memcpy(dataBuffer + fileSize, userID.data(), userID.length());
-
-    dataSize += fileSize;
-  }
-  else
-  {
-    memcpy(dataBuffer, userID.data(), userID.length());
-  }
-  MD5 md5(dataBuffer, dataSize);
+  std::string hash = hashFile(currentSave, bufferSize);
 
   // Update metadata
-  calcNow();
   for (pugi::xml_node gamestatus : doc.children())
   {
     for (pugi::xml_node savefile : gamestatus.children())
@@ -192,7 +212,7 @@ void Metadata::updateFF8(uint8_t slot, uint8_t save)
 
           if (strcmp(child.name(), "signature") == 0)
           {
-            child.text().set(md5.hexdigest().data());
+            child.text().set(hash.data());
           }
         }
       }

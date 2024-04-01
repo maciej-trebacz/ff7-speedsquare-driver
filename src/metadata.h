@@ -35,21 +35,23 @@
 class Metadata
 {
 private:
-  pugi::xml_document doc;
+    pugi::xml_document doc;
 
-  std::string now;
-  std::string userID;
-  char userPath[260]{ 0 };
-  char savePath[260]{ 0 };
+    std::string now;
+    std::string userID;
+    char userPath[260]{ 0 };
+    char savePath[260]{ 0 };
 
-  void calcNow();
-  void loadXml();
-  void saveXml();
+    void calcNow();
+    void loadXml();
+    void saveXml();
+    std::string hashFile(const char* filePath, size_t bufferSize);
+    std::string emptyHash();
 
 public:
-  void init();
-  void updateFF7(uint8_t save);
-  void updateFF8(uint8_t slot, uint8_t save);
+    void init();
+    void updateFF7(uint8_t slot, uint8_t save);
+    void updateFF8(uint8_t slot, uint8_t save);
 };
 
 extern Metadata metadataPatcher;

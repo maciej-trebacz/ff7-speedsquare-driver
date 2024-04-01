@@ -610,8 +610,9 @@ BOOL ff7_write_save_file(char slot)
 	BOOL ret = ff7_externals.write_save_file(slot);
 
   uint8_t savefile_num = ((slot & 0xF0) >> 4);
+  uint8_t savefile_slot = (slot & 0xF);
   ffnx_trace("Save: user saved in save:%u\n", savefile_num);
-  metadataPatcher.updateFF7(savefile_num);
+  metadataPatcher.updateFF7(savefile_slot, savefile_num);
 
 	return ret;
 }
