@@ -939,8 +939,6 @@ void common_cleanup(struct game_obj *game_object)
 
 	if (steam_edition)
 	{
-		metadataPatcher.apply();
-
 		if (!ff8)
 		{
 			// Write ff7sound.cfg
@@ -3029,6 +3027,9 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 			if (external_ambient_volume < 0) external_ambient_volume = 100;
 			if (ffmpeg_video_volume < 0) ffmpeg_video_volume = 100;
 		}
+
+    // Init metadata patcher
+    if (steam_edition) metadataPatcher.init();
 
 		// Apply hext patching
 		hextPatcher.applyAll();
