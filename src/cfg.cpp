@@ -158,12 +158,20 @@ std::vector<std::string> get_string_or_array_of_strings(const toml::node_view<to
 
 void read_cfg()
 {
-	toml::parse_result config;
-
-  // SpeedSquare: no config file loading, all config values are static
+	toml::parse_result tomlConfig;
+  toml::parse_result config;
   config = toml::parse("");
 
-	// Read config values
+  try
+  {
+    tomlConfig = toml::parse_file(FFNX_CFG_FILE);
+  }
+  catch (const toml::parse_error& err)
+  {
+    tomlConfig = toml::parse("");
+  }
+
+	// SpeedSquare: Set the config to the default values
 	mod_path = config["mod_path"].value_or("");
 	mod_ext = get_string_or_array_of_strings(config["mod_ext"]);
 	enable_ffmpeg_videos = config["enable_ffmpeg_videos"].value_or(-1);
@@ -277,6 +285,12 @@ void read_cfg()
 	external_voice_volume = config["external_voice_volume"].value_or(-1);
 	external_ambient_volume = config["external_ambient_volume"].value_or(-1);
 	ffmpeg_video_volume = config["ffmpeg_video_volume"].value_or(-1);
+
+  // SpeedSquare: Read renderer backend config from toml
+  if (tomlConfig["renderer_backend"].is_value()) {
+    renderer_backend = tomlConfig["renderer_backend"].value_or(RENDERER_BACKEND_AUTO);
+    show_renderer_backend = true;
+  }
 
 	// Windows x or y size can't be less then 0
 	if (window_size_x < 0) window_size_x = 0;

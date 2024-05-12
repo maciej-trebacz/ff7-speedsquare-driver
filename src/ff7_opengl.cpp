@@ -8,6 +8,7 @@
 //    Copyright (C) 2023 Julian Xhokaxhiu                                   //
 //    Copyright (C) 2023 Cosmos                                             //
 //    Copyright (C) 2023 Marcin 'Maki' Gomulak                              //
+//    Copyright (C) 2024 mav                                                //
 //                                                                          //
 //    This file is part of FFNx                                             //
 //                                                                          //
@@ -258,6 +259,7 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	}
 
 	// Field FPS fix (60FPS, 30FPS movies)
+  // SpeedSquare: We don't need 60FPS support
   // ff7::field::ff7_field_hook_init();
 
 	// ##########################
