@@ -853,7 +853,7 @@ int common_create_window(HINSTANCE hInstance, struct game_obj* game_object)
 				world_init();
 				music_init();
 				sfx_init();
-				voice_init();
+				// voice_init();
 
 				if (enable_ffmpeg_videos)
 				{

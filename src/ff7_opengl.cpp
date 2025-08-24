@@ -137,7 +137,7 @@ void ff7_init_hooks(struct game_obj *_game_object)
 	replace_function(ff7_externals.field_update_scripted_bg_movement, ff7::field::field_update_scripted_bg_movement);
 
   // SpeedSquare: This is the MDef fix, fixing a Steam bug, which we don't want for speedrun purposes
-	// replace_function(ff7_externals.get_equipment_stats, get_equipment_stats);
+	replace_function(ff7_externals.get_equipment_stats, get_equipment_stats);
 
 	replace_function(common_externals.open_file, open_file);
 	replace_function(common_externals.read_file, read_file);
