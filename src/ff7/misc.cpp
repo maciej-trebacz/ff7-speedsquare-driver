@@ -527,8 +527,11 @@ void ff7_limit_fps()
 	  case MODE_BATTLE:
 		  framerate = 15.0f;
 		  break;
+    case MODE_CREDITS:
+      // Credits originally run at 39 FPS because reasons
+      framerate = 39.0f;
+      break;
 	  case MODE_CONDOR:
-	  case MODE_CREDITS:
 		  framerate = 60.0f;
 		  break;
     case MODE_SUBMARINE:

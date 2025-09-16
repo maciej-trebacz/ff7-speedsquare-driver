@@ -158,6 +158,7 @@ target_compile_options(
   PRIVATE /Zc:strictStrings-
   PRIVATE /Zc:__cplusplus
   PRIVATE /Qpar
+  PRIVATE /MP
 )
 if(PATCH_COLLECT_DUPLICATES)
   target_compile_definitions(${RELEASE_NAME}

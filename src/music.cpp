@@ -1056,7 +1056,7 @@ void music_init()
 	if (!ff8)
 	{
 		// Fix music stop issue in FF7
-		patch_code_dword(ff7_externals.music_lock_clear_fix + 2, 0xCC195C);
+		// patch_code_dword(ff7_externals.music_lock_clear_fix + 2, 0xCC195C);
 		// Fix Cid speech music stop + music channel detection (field only)
 		replace_call(ff7_externals.opcode_akao + 0xEA, ff7_music_sound_operation_fix);
 		replace_call(ff7_externals.opcode_akao2 + 0xE8, ff7_music_sound_operation_fix);
